@@ -5,14 +5,24 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.WebDriver;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-class cardOrderTest {
+class CardOrderTest {
 
     @BeforeAll
     public static void setupAll() {
         WebDriverManager.chromedriver().setup();
+    }
+
+    @BeforeEach
+    public void test() {
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--headless");
+        driver = new ChromeDriver(options);
+        driver.get("http://localhost:9999/");
     }
 
     ChromeOptions options = new ChromeOptions();
@@ -20,12 +30,6 @@ class cardOrderTest {
 
     @Test
     void happyPath() {
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--headless");
-
-        driver = new ChromeDriver(options);
-        driver.get("http://localhost:9999/");
         WebElement form = driver.findElement(By.className("form"));
         form.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Олег");
         form.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+71234567890");
@@ -35,18 +39,5 @@ class cardOrderTest {
         String actual = driver.findElement(By.cssSelector("[data-test-id=order-success]")).getText().trim();
         String expected = "Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
         assertEquals(expected, actual);
-    }
-
-    @Test
-    void unhappyPath() {
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--headless");
-
-        driver = new ChromeDriver(options);
-        driver.get("http://localhost:9999/");
-        WebElement form = driver.findElement(By.className("form"));
-        form.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Oleg");
-
     }
 }
